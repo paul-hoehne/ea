@@ -19,6 +19,6 @@ etc., they all had roughly the same general outline.
 
 Being able to parameterize an EA so as to mimic a (highly explorative)
 Genetic Algorithm with sexual reproduction and fitness-proportional 
-selection or more of a \mu \plus \lambda (and highly exploitive) Evolutionary
+selection or more of a <span>&mu; + &lambda;</span> (and highly exploitive) Evolutionary
 Strategy is possible in a framework that views them as points along a 
 continuum.
