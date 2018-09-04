@@ -2,6 +2,14 @@ package alleles
 
 import "testing"
 
+func TestRealAlleleString(t *testing.T) {
+	ra := RealAllele(1.0)
+
+	if "1.0000e+00" != ra.String() {
+		t.Errorf("Expected 1.0000e+00 but got '%s'", ra.String())
+	}
+}
+
 func TestRandomRealAlleleFactory(t *testing.T) {
 	u := UniformBoundedRealFactory{
 		-1.0,

@@ -1,6 +1,10 @@
 package alleles
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+)
 
 var masks = []byte{
 	byte(1),
@@ -19,6 +23,26 @@ var masks = []byte{
 type BitAllele struct {
 	Bits  []byte
 	Width int
+}
+
+// Provide a string represenation of the allele
+func (ba BitAllele) String() string {
+	temp := []string{}
+	tmpWidth := ba.Width
+
+	for _, b := range ba.Bits {
+		fmtString := "%08b"
+		if tmpWidth%8 != 0 {
+			fmtString = fmt.Sprintf("%%0%db", tmpWidth%8)
+			tmpWidth -= tmpWidth % 8
+		} else {
+			tmpWidth -= 8
+		}
+		temp = append(temp, fmt.Sprintf(fmtString, b))
+
+	}
+
+	return strings.Join(temp, " ")
 }
 
 // BitFactory produces random strings of bit alleles of the given

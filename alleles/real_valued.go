@@ -1,9 +1,16 @@
 package alleles
 
-import "math/rand"
+import (
+	"math/rand"
+	"strconv"
+)
 
 // RealAllele is an allele based on a floating point value.
 type RealAllele float64
+
+func (ra RealAllele) String() string {
+	return strconv.FormatFloat(float64(ra), 'e', 4, 64)
+}
 
 // UniformBoundedRealFactory produces a new real valued
 // allele between two bounds (min and max)

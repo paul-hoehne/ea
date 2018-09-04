@@ -151,3 +151,34 @@ func TestMultiByteMutate(t *testing.T) {
 			bits.Bits[1], bits.Bits[2])
 	}
 }
+
+func TestBitStringString(t *testing.T) {
+	bs := BitAllele{
+		Bits:  []byte{0x0f},
+		Width: 4,
+	}
+
+	if "1111" != bs.String() {
+		t.Errorf("Expected 1111 but got '%s'", bs.String())
+	}
+
+	bs.Bits[0] = 7
+
+	if "0111" != bs.String() {
+		t.Errorf("Expected 0111 but got '%s'", bs.String())
+	}
+
+	bs.Bits = []byte{0x03, 0x43}
+	bs.Width = 12
+
+	if "0011 01000011" != bs.String() {
+		t.Errorf("Expected 0011 01000011 but got '%s'", bs.String())
+	}
+
+	bs.Bits = []byte{0xf3, 0xe1}
+	bs.Width = 16
+
+	if "11110011 11100001" != bs.String() {
+		t.Errorf("Expected 11110011 11100001 but got '%s'", bs.String())
+	}
+}

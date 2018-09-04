@@ -1,6 +1,9 @@
 package alleles
 
-import "math/rand"
+import (
+	"math/rand"
+	"strconv"
+)
 
 // Support for handling alleles of code values where the allele
 // takes a random code value and supports mutation to another
@@ -8,7 +11,17 @@ import "math/rand"
 
 // CodeAllele is an allele made over a set of code values
 type CodeAllele struct {
-	Value byte
+	Value        byte
+	Translations map[byte]string
+}
+
+func (ca CodeAllele) String() string {
+	str, ok := ca.Translations[ca.Value]
+	if !ok {
+		return strconv.FormatUint(uint64(ca.Value), 10)
+	}
+
+	return str
 }
 
 // CodeFactory selects a code based on the relative frequency of
@@ -16,8 +29,9 @@ type CodeAllele struct {
 // frequency of 5.0, 3.0, 2.0 which means 1 is chosen about 1/2
 // the time, 2, 30% of the time and 2.0 20% of the time.
 type CodeFactory struct {
-	Codes       []byte
-	Frequencies []float64
+	Codes        []byte
+	Translations map[byte]string
+	Frequencies  []float64
 }
 
 func pickBasedOnFrequency(codes []byte, freqs []float64) byte {

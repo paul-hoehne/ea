@@ -2,6 +2,32 @@ package alleles
 
 import "testing"
 
+func TestCodeAlleleString(t *testing.T) {
+	ca := CodeAllele{
+		Value:        1,
+		Translations: map[byte]string{1: "Foo"},
+	}
+
+	if "Foo" != ca.String() {
+		t.Errorf("Expected Foo but got '%s'", ca.String())
+	}
+
+	ca.Value = 2
+
+	if "2" != ca.String() {
+		t.Errorf("Expected 2 but got '%s'", ca.String())
+	}
+
+	ca = CodeAllele{
+		Value: 1,
+	}
+
+	if "1" != ca.String() {
+		t.Errorf("Expected 1 but got '%s'", ca.String())
+	}
+
+}
+
 func TestRandomCodedAllele(t *testing.T) {
 	f := CodeFactory{
 		Codes:       []byte{1, 2, 3, 4},

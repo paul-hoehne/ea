@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/paul-hoehne/ea/alleles"
-
 	"github.com/paul-hoehne/ea/genes"
 )
 
