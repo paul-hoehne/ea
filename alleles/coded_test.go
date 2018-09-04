@@ -25,7 +25,25 @@ func TestCodeAlleleString(t *testing.T) {
 	if "1" != ca.String() {
 		t.Errorf("Expected 1 but got '%s'", ca.String())
 	}
+}
 
+func TestCodeAlleleStringAfterMutation(t *testing.T) {
+	ca := CodeAllele{
+		Value:        1,
+		Translations: map[byte]string{1: "Foo", 2: "Bar"},
+	}
+
+	m := CodeMutator{
+		Codes: []byte{1, 2},
+	}
+
+	cb := m.Mutate(ca)
+
+	code := cb.(CodeAllele)
+
+	if code.String() != "Foo" && code.String() != "Bar" {
+		t.Errorf("Expected Foo or Bar but got '%s'", code.String())
+	}
 }
 
 func TestRandomCodedAllele(t *testing.T) {

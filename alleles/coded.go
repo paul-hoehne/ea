@@ -84,6 +84,8 @@ type CodeMutator struct {
 func (cm CodeMutator) Mutate(a Allele) Allele {
 	result := CodeAllele{}
 
+	result.Translations = a.(CodeAllele).Translations
+
 	if len(cm.Frequencies) != 0 {
 		result.Value = pickBasedOnFrequency(cm.Codes, cm.Frequencies)
 	} else {
