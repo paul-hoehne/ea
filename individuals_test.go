@@ -3,6 +3,8 @@ package ea
 import (
 	"testing"
 
+	"github.com/chilts/sid"
+
 	"github.com/paul-hoehne/ea/alleles"
 	"github.com/paul-hoehne/ea/genes"
 )
@@ -25,6 +27,10 @@ func TestIndividualFactoryCreate(t *testing.T) {
 	}
 
 	i := ifact.Create()
+
+	if i.ID == "" {
+		t.Error("Expected the individual to have an ID")
+	}
 
 	if len(i.Genes) != 2 {
 		t.Errorf("Expected 2 genes but got %d", len(i.Genes))
@@ -50,6 +56,7 @@ func TestIndividualFactoryCreate(t *testing.T) {
 
 func TestIndividualSpawn(t *testing.T) {
 	i := Individual{
+		ID: sid.Id(),
 		Genes: []genes.Gene{
 			genes.Gene{
 				Alleles: []alleles.Allele{
@@ -77,6 +84,10 @@ func TestIndividualSpawn(t *testing.T) {
 	}
 
 	ix := i.Spawn()
+
+	if ix.ID == "" || ix.ID == i.ID {
+		t.Error("Expected spawned child to have new, unique ID")
+	}
 
 	if len(ix.Genes) != 4 {
 		t.Errorf("Expected 4 genes but got %d", len(ix.Genes))
@@ -116,6 +127,7 @@ func TestIndividualSpawn(t *testing.T) {
 
 func TestIndividualBreed(t *testing.T) {
 	p1 := Individual{
+		ID: sid.Id(),
 		Genes: []genes.Gene{
 			genes.Gene{
 				Alleles: []alleles.Allele{
@@ -131,6 +143,7 @@ func TestIndividualBreed(t *testing.T) {
 	}
 
 	p2 := Individual{
+		ID: sid.Id(),
 		Genes: []genes.Gene{
 			genes.Gene{
 				Alleles: []alleles.Allele{
@@ -146,6 +159,10 @@ func TestIndividualBreed(t *testing.T) {
 	}
 
 	p3 := p1.Breed(p2, 1.0)
+
+	if p3.ID == "" || p3.ID == p1.ID || p3.ID == p2.ID {
+		t.Error("Expected child to have a unique ID")
+	}
 
 	if len(p3.Genes) != 2 {
 		t.Errorf("Expected child to have 2 genes but got: %d", len(p3.Genes))
@@ -189,6 +206,7 @@ func TestIndividualBreed(t *testing.T) {
 
 func TestIndividualMutate(t *testing.T) {
 	p1 := Individual{
+		ID: sid.Id(),
 		Genes: []genes.Gene{
 			genes.Gene{
 				Alleles: []alleles.Allele{
@@ -217,6 +235,10 @@ func TestIndividualMutate(t *testing.T) {
 	}
 
 	p1.Mutate(ms, 1.0)
+
+	if p1.ID == "" {
+		t.Error("Expected mutated individual to have an ID")
+	}
 
 	b, ok := p1.Genes[0].Alleles[0].(alleles.BitAllele)
 	if !ok {

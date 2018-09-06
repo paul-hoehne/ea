@@ -10,13 +10,18 @@ type PopulationStatistics struct {
 type Population struct {
 	Individuals []Individual
 	Factory     IndividualFactory
+	Mutators    IndividualMutators
 	Size        int
 	Statistics  PopulationStatistics
 }
 
 // Initialize a new population of random individuals
 func (p *Population) Initialize() {
+	p.Individuals = make([]Individual, p.Size)
 
+	for i := 0; i < p.Size; i++ {
+		p.Individuals[i] = p.Factory.Create()
+	}
 }
 
 // CreateOffspring creates a set of offspring given the parents,

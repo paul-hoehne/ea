@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"sync"
 
+	"github.com/chilts/sid"
+
 	"github.com/paul-hoehne/ea/alleles"
 	"github.com/paul-hoehne/ea/genes"
 )
@@ -17,6 +19,7 @@ type FitnessFunction func(i *Individual, wg *sync.WaitGroup)
 
 // Individual is a member of the population
 type Individual struct {
+	ID      string
 	Genes   []genes.Gene
 	Fitness float64
 }
@@ -26,9 +29,14 @@ type IndividualFactory struct {
 	GeneFactories []genes.GeneFactory
 }
 
+type IndividualMutators struct {
+	GeneMutators []genes.GeneMutator
+}
+
 // Create a new individual
 func (i IndividualFactory) Create() Individual {
 	result := Individual{
+		ID:    sid.Id(),
 		Genes: make([]genes.Gene, len(i.GeneFactories)),
 	}
 
@@ -48,6 +56,7 @@ func (i IndividualFactory) Create() Individual {
 // Spawn is asexual reproduction.
 func (i Individual) Spawn() Individual {
 	result := Individual{
+		ID:    sid.Id(),
 		Genes: make([]genes.Gene, len(i.Genes)),
 	}
 
@@ -71,6 +80,7 @@ func (i Individual) Spawn() Individual {
 // bitstring individual later)
 func (i Individual) Breed(other Individual, crossoverRate float64) Individual {
 	result := Individual{
+		ID:    sid.Id(),
 		Genes: make([]genes.Gene, len(i.Genes)),
 	}
 
