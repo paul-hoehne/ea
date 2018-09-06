@@ -4,34 +4,6 @@ import (
 	"sync"
 )
 
-// Selector is a way to choose a set of individuals
-type Selector interface {
-	Select(pop Population) []Individual
-}
-
-// FitnessProportionalSelector selects one or more individuals
-// based on fitness proportionality.
-type FitnessProportionalSelector struct {
-	WithReplacement bool
-	ParentCount     int
-}
-
-// Select individuals based on their fitness.
-func (fp FitnessProportionalSelector) Select(pop []Individual) []Individual {
-	return nil
-}
-
-// UniformSelector selects individuals on an eqiprobable basis.
-type UniformSelector struct {
-	WithReplacement bool
-	ParentCount     int
-}
-
-// Select individuals using a uniform distribution
-func (us UniformSelector) Select(pop []Individual) []Individual {
-	return nil
-}
-
 // Stopper returns true when it's time to stop a simulation
 type Stopper interface {
 	Stop(s *Simulation) bool
