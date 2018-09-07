@@ -128,3 +128,40 @@ func TestFitnessProportionalSelectorWithReplacement(t *testing.T) {
 		}
 	}
 }
+
+func TestUniformSelectorWithReplacement(t *testing.T) {
+	s := UniformSelector{
+		SelectCount:     5,
+		WithReplacement: true,
+	}
+
+	pop := []Individual{
+		Individual{ID: sid.Id(), Fitness: 1.0},
+		Individual{ID: sid.Id(), Fitness: 1.0},
+		Individual{ID: sid.Id(), Fitness: 1.0},
+	}
+
+	selected := s.Select(pop)
+
+	if len(selected) != s.SelectCount {
+		t.Errorf("Expcted %d but got %d", s.SelectCount, len(selected))
+	}
+}
+
+func TestUniformSelectorWithoutReplacement(t *testing.T) {
+	s := UniformSelector{
+		SelectCount: 5,
+	}
+
+	pop := []Individual{
+		Individual{ID: sid.Id(), Fitness: 1.0},
+		Individual{ID: sid.Id(), Fitness: 1.0},
+		Individual{ID: sid.Id(), Fitness: 1.0},
+	}
+
+	selected := s.Select(pop)
+
+	if len(selected) != len(pop) {
+		t.Errorf("Expcted %d but got %d", len(pop), len(selected))
+	}
+}

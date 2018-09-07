@@ -87,7 +87,44 @@ type UniformSelector struct {
 	SelectCount     int
 }
 
+func (us UniformSelector) selectWithReplacement(pop []Individual) []Individual {
+	result := make([]Individual, 0)
+
+	for i := 0; i < us.SelectCount; i++ {
+		idx := rand.Int() % len(pop)
+		result = append(result, pop[idx])
+	}
+
+	return result
+}
+
+func (us UniformSelector) selectWithoutReplacement(pop []Individual) []Individual {
+	altmap := make([]*Individual, len(pop))
+	for i := range pop {
+		altmap[i] = &pop[i]
+	}
+
+	result := []Individual{}
+	for j := 0; j < us.SelectCount && len(altmap) > 0; j++ {
+		idx := rand.Int() % len(altmap)
+
+		result = append(result, *(altmap[idx]))
+		if idx == 0 {
+			altmap = altmap[1:]
+		} else if idx == len(altmap)-1 {
+			altmap = altmap[:len(altmap)-1]
+		} else {
+			altmap = append(altmap[:idx], altmap[idx+1:]...)
+		}
+	}
+	return result
+}
+
 // Select individuals using a uniform distribution
 func (us UniformSelector) Select(pop []Individual) []Individual {
-	return nil
+	if us.WithReplacement {
+		return us.selectWithReplacement(pop)
+	}
+
+	return us.selectWithoutReplacement(pop)
 }
