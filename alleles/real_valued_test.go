@@ -19,7 +19,7 @@ func TestRandomRealAlleleFactory(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		ra := u.Random()
 
-		if ra == 0.0 {
+		if ra == RealAllele(0.0) {
 			t.Errorf("Expected non zero")
 		}
 

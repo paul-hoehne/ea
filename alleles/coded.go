@@ -15,6 +15,14 @@ type CodeAllele struct {
 	Translations map[byte]string
 }
 
+// Copy returns a copy of this code allele
+func (ca CodeAllele) Copy() Allele {
+	return CodeAllele{
+		Value:        ca.Value,
+		Translations: ca.Translations,
+	}
+}
+
 func (ca CodeAllele) String() string {
 	str, ok := ca.Translations[ca.Value]
 	if !ok {

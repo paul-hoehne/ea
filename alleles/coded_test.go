@@ -92,3 +92,20 @@ func TestRandomCodedMutator(t *testing.T) {
 		t.Errorf("Expected 1 but got: %d", c.Value)
 	}
 }
+
+func TestCodeAlleleCopy(t *testing.T) {
+	ca1 := CodeAllele{
+		Value: 1,
+	}
+
+	copy := ca1.Copy()
+	ca2, ok := copy.(CodeAllele)
+
+	if !ok {
+		t.Error("Expected copy to ba code allele")
+	}
+
+	if ca2.Value != ca1.Value {
+		t.Errorf("Expected %d but got %d in copy", ca1.Value, ca2.Value)
+	}
+}

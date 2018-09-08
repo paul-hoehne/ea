@@ -182,3 +182,27 @@ func TestBitStringString(t *testing.T) {
 		t.Errorf("Expected 11110011 11100001 but got '%s'", bs.String())
 	}
 }
+
+func TestBitAlleleCopy(t *testing.T) {
+	bs1 := BitAllele{
+		Width: 16,
+		Bits:  []byte{0xab, 0xcd},
+	}
+
+	copy := bs1.Copy()
+
+	bs2, ok := copy.(BitAllele)
+	if !ok {
+		t.Error("Expected a type of BitAllele")
+	}
+
+	if bs1.Width != bs2.Width {
+		t.Errorf("Expected width to be %d but got %d", bs1.Width, bs2.Width)
+	}
+
+	bs1.Bits[0] = 0x00
+
+	if bs2.Bits[0] == 0x00 {
+		t.Error("Edited original and change showed up in copy")
+	}
+}

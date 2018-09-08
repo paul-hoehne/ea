@@ -25,6 +25,16 @@ type BitAllele struct {
 	Width int
 }
 
+// Copy returns a copy of this bit allele
+func (ba BitAllele) Copy() Allele {
+	result := BitAllele{
+		Width: ba.Width,
+	}
+
+	result.Bits = append([]byte{}, ba.Bits...)
+	return result
+}
+
 // Provide a string represenation of the allele
 func (ba BitAllele) String() string {
 	temp := []string{}

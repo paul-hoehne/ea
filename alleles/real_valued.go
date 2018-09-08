@@ -8,6 +8,11 @@ import (
 // RealAllele is an allele based on a floating point value.
 type RealAllele float64
 
+// Copy returns a copy of this real allele
+func (ra RealAllele) Copy() Allele {
+	return RealAllele(0.0)
+}
+
 func (ra RealAllele) String() string {
 	return strconv.FormatFloat(float64(ra), 'e', 4, 64)
 }

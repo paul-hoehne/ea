@@ -2,6 +2,7 @@ package alleles
 
 // Allele is a value expression of a gene.
 type Allele interface {
+	Copy() Allele
 }
 
 // Factory produces new random alleles.
