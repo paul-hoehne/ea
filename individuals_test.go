@@ -284,3 +284,129 @@ func TestIndividualMutate(t *testing.T) {
 		t.Errorf("Expected value to be four but got %d", c.Value)
 	}
 }
+
+func TestSimpleCrossoverReproductionStrategy(t *testing.T) {
+	f := SimpleCrossoverReproductionStrategy(0.0, 1)
+
+	pop := []Individual{
+		Individual{
+			ID: sid.Id(),
+			Genes: []genes.Gene{
+				genes.Gene{
+					Alleles: []alleles.Allele{
+						alleles.BitAllele{
+							Width: 4,
+							Bits:  []byte{0x0c},
+						},
+					},
+				},
+			},
+		},
+		Individual{
+			ID: sid.Id(),
+			Genes: []genes.Gene{
+				genes.Gene{
+					Alleles: []alleles.Allele{
+						alleles.BitAllele{
+							Width: 4,
+							Bits:  []byte{0x03},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	i := f(pop)
+	b := i[0].Genes[0].Alleles[0].(alleles.BitAllele)
+	if b.Bits[0] != 0x0c {
+		t.Error("Expected a 0 crossover to select from first parent")
+	}
+
+	f = SimpleCrossoverReproductionStrategy(1.0, 1)
+	i = f(pop)
+	b = i[0].Genes[0].Alleles[0].(alleles.BitAllele)
+	if b.Bits[0] != 0x03 {
+		t.Error("Expected a 1 crossover to select from the second parent")
+	}
+
+	parentIds := make(map[string]string)
+	for _, p := range pop {
+		parentIds[p.ID] = p.ID
+	}
+
+	f = SimpleCrossoverReproductionStrategy(1.0, 5)
+	i = f(pop)
+	if len(i) < 5 {
+		t.Errorf("Expected 5 offspring but got %d", len(i))
+	}
+
+	for _, a := range i {
+		if a.ID == "" {
+			t.Error("Expected offspring to have id")
+		}
+
+		if _, ok := parentIds[a.ID]; ok {
+			t.Error("Expected offsprint to have a unique id from parents")
+		}
+	}
+}
+
+func TestSimpleCopyReproductionStrategy(t *testing.T) {
+	pop := []Individual{
+		Individual{
+			ID: sid.Id(),
+			Genes: []genes.Gene{
+				genes.Gene{
+					Alleles: []alleles.Allele{
+						alleles.BitAllele{
+							Width: 4,
+							Bits:  []byte{0x0c},
+						},
+					},
+				},
+			},
+		},
+		Individual{
+			ID: sid.Id(),
+			Genes: []genes.Gene{
+				genes.Gene{
+					Alleles: []alleles.Allele{
+						alleles.BitAllele{
+							Width: 4,
+							Bits:  []byte{0x03},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	f := SimpleCopyReproductionStrategy(1)
+	i := f(pop[0:1])
+
+	if len(i) != 1 {
+		t.Errorf("Expected 1 offspring but got %d", len(i))
+	}
+
+	if i[0].ID == "" {
+		t.Errorf("Expected child to have ID")
+	}
+
+	if len(i[0].Genes) != len(pop[0].Genes) {
+		t.Errorf("Expected child to have %d genes but had %d",
+			len(pop[0].Genes), len(i[0].Genes))
+	}
+
+	b1 := pop[0].Genes[0].Alleles[0].(alleles.BitAllele)
+	b2, ok := i[0].Genes[0].Alleles[0].(alleles.BitAllele)
+
+	if !ok {
+		t.Error("Expected child to also have a bit allele")
+	}
+
+	if b1.Bits[0] != b2.Bits[0] {
+		t.Errorf("Expected child to have %x but had %x",
+			b1.Bits[0], b2.Bits[0])
+	}
+}

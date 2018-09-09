@@ -17,6 +17,10 @@ import (
 // expected to run in separate goroutine.
 type FitnessFunction func(i *Individual, wg *sync.WaitGroup)
 
+// ReproductionStrategy takes a set of individuals and produces
+// a new individual
+type ReproductionStrategy func([]Individual) []Individual
+
 // Individual is a member of the population
 type Individual struct {
 	ID      string
@@ -29,6 +33,8 @@ type IndividualFactory struct {
 	GeneFactories []genes.GeneFactory
 }
 
+// IndividualMutators contains the gene mutators necessary to
+// perform mutation on an individual.
 type IndividualMutators struct {
 	GeneMutators []genes.GeneMutator
 }
@@ -61,13 +67,7 @@ func (i Individual) Spawn() Individual {
 	}
 
 	for idx, g := range i.Genes {
-		result.Genes[idx] = genes.Gene{
-			Alleles: make([]alleles.Allele, len(g.Alleles)),
-		}
-
-		for j, a := range g.Alleles {
-			result.Genes[idx].Alleles[j] = a
-		}
+		result.Genes[idx] = g.Copy()
 	}
 
 	return result
@@ -84,14 +84,11 @@ func (i Individual) Breed(other Individual, crossoverRate float64) Individual {
 		Genes: make([]genes.Gene, len(i.Genes)),
 	}
 
-	for idx, g := range i.Genes {
-		result.Genes[idx].Alleles = make([]alleles.Allele, len(g.Alleles))
-		for j, a := range g.Alleles {
-			if rand.Float64() < crossoverRate {
-				result.Genes[idx].Alleles[j] = other.Genes[idx].Alleles[j]
-			} else {
-				result.Genes[idx].Alleles[j] = a
-			}
+	for idx := range i.Genes {
+		if rand.Float64() < crossoverRate {
+			result.Genes[idx] = other.Genes[idx].Copy()
+		} else {
+			result.Genes[idx] = i.Genes[idx].Copy()
 		}
 	}
 
@@ -105,5 +102,51 @@ func (i *Individual) Mutate(muts []genes.GeneMutator, mutationRate float64) {
 		if rand.Float64() < mutationRate {
 			i.Genes[idx] = muts[idx].Mutate(g)
 		}
+	}
+}
+
+// SimpleCrossoverReproductionStrategy creates a func that reproduces
+// using crossover and the given crossover rate.
+func SimpleCrossoverReproductionStrategy(crossover float64, numOffspring int) ReproductionStrategy {
+	return func(matingPair []Individual) []Individual {
+		result := make([]Individual, numOffspring)
+
+		for j := 0; j < numOffspring; j++ {
+			i := Individual{
+				ID:    sid.Id(),
+				Genes: make([]genes.Gene, len(matingPair[0].Genes)),
+			}
+			for g := range matingPair[0].Genes {
+				if rand.Float64() < crossover {
+					i.Genes[g] = matingPair[1].Genes[g]
+				} else {
+					i.Genes[g] = matingPair[0].Genes[g]
+				}
+			}
+			result[j] = i
+		}
+
+		return result
+	}
+}
+
+// SimpleCopyReproductionStrategy Takes a set of individual and
+// (round-robin fashion) returns copies of thos individuals.
+// (Used mainly for asexual reproduction in something like a
+// classic Evolutionary Strategy)
+func SimpleCopyReproductionStrategy(numOffspring int) ReproductionStrategy {
+	return func(individual []Individual) []Individual {
+		result := make([]Individual, numOffspring)
+
+		for i := range result {
+			result[i].ID = sid.Id()
+
+			result[i].Genes = make([]genes.Gene, len(individual[0].Genes))
+			for gidx, g := range individual[0].Genes {
+				result[i].Genes[gidx] = g.Copy()
+			}
+		}
+
+		return result
 	}
 }
