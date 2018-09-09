@@ -59,3 +59,26 @@ func TestGeneMutation(t *testing.T) {
 		t.Error("Expected the second allele to be a real allele")
 	}
 }
+
+func TestGeneCopy(t *testing.T) {
+	g := Gene{
+		Alleles: []alleles.Allele{
+			alleles.BitAllele{Width: 4, Bits: []byte{0x0f}},
+		},
+	}
+
+	g2 := g.Copy()
+
+	if len(g.Alleles) != len(g2.Alleles) {
+		t.Errorf("Expected %d alleles but got %d", len(g.Alleles), len(g2.Alleles))
+	}
+
+	bs1 := g.Alleles[0].(alleles.BitAllele)
+	bs2 := g2.Alleles[0].(alleles.BitAllele)
+
+	bs1.Bits[0] = 0x00
+
+	if bs1.Bits[0] == bs2.Bits[0] {
+		t.Error("Expected alleles to be different after copy")
+	}
+}

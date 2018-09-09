@@ -44,3 +44,16 @@ func (gm GeneMutator) Mutate(g Gene) Gene {
 
 	return result
 }
+
+// Copy returns a copy of the gene
+func (g Gene) Copy() Gene {
+	result := Gene{
+		Alleles: make([]alleles.Allele, len(g.Alleles)),
+	}
+
+	for i := range g.Alleles {
+		result.Alleles[i] = g.Alleles[i].Copy()
+	}
+
+	return result
+}
